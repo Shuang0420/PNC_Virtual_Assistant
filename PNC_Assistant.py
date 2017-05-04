@@ -6,10 +6,14 @@ import time
 import unidecode
 
 
-# username and password for reddit
-USERNAME = 'shuang'
-PASSWORD = '0420'
+# sample username and password
+USERNAME = 'mayduncan323'
+PASSWORD = 'mayduncan323'
+URL = "https://nginx0.pncapix.com"
+version = "/v1.0.0"
+header_dict = {"Content-Type": "application/json", "Accept": "application/json", 'Authorization': "Bearer efa92a43-be7b-32ef-a6df-ef1831d4d9ca"}
 
+pnc_api_token = ''
 
 # define Flask app
 app = Flask(__name__)
@@ -67,5 +71,22 @@ def no_intent():
 
 
 
+def login(username, password):
+    creds = {}
+    param = {}
+    creds['username'] = username
+    creds['password'] = password
+    param['accountCredentials'] = creds
+    response = httpPost(creds, 'security', 'login')
+    return response.text
+
+
+def httpPost(params, api, func):
+    response = requests.post(URL + '/' + api + version + '/' + func, headers=header_dict, json=params)
+    return response
+
+
 if __name__ == '__main__':
+    # initalize pnc_api_token
+    pnc_api_token = login(USERNAME, PASSWORD)
     app.run(debug=True)
