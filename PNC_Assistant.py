@@ -18,7 +18,7 @@ pnc_api_token = ''
 # define Flask app
 app = Flask(__name__)
 # give basic endpoint, can be flask skill/program endpoint
-ask = Ask(app, "/reddit_reader")
+ask = Ask(app, "/pnc_assistant")
 
 # check balance
 def getBalance():
@@ -34,6 +34,7 @@ def checkTransaction():
 
 
 # get answer to frequent asked questions
+# hard code
 def getFAQ():
     pass
 
