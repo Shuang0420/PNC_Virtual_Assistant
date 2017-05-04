@@ -44,23 +44,31 @@ def getAccounts(pnc_api_token):
             accounts[account['accountType']['accountType']] = account['balance']
     return accounts
     
-def getTransactionAmount(timespan):
+def getTransactionAmount(pnc_api_token, timespan=None, category=None):
     now = datetime.datetime.now() - datetime.timedelta(days=190)
-    if timespan == 'week':
+    if timespan is None:
+        timespan = 'day'
+    if timespan == 'day':
+        start = datetime.datetime(now.year, now.month, now.day)
+        start = start.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
+        now = now.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
+        return getTransactionByDateAndCat(pnc_api_token, start, now, category)
+    elif timespan == 'week':
         start = now.date() - datetime.timedelta(days=datetime.datetime.today().isoweekday())
         start = start.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
         now = now.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
-        return getTransactionByDate(pnc_api_token, start, now)
+        return getTransactionByDateAndCat(pnc_api_token, start, now, category)
     elif timespan == 'month':
         start = datetime.datetime(now.year, now.month, 1)
         start = start.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
         now = now.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z';
-        return getTransactionByDate(pnc_api_token, start, now)
+        return getTransactionByDateAndCat(pnc_api_token, start, now, category)
     elif timespan == 'year':
         start = datetime.datetime(now.year, 1, 1)
         start = start.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
         now = now.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
-        return getTransactionByDate(pnc_api_token, start, now)
+        return getTransactionByDateAndCat(pnc_api_token, start, now, category)
+        
         
 def getTransactionByCat(pnc_api_token, category):
     header = dict(header_dict)
@@ -87,7 +95,7 @@ def getTransactionByCat(pnc_api_token, category):
                 pass
     return total
     
-def getTransactionByDate(pnc_api_token, start, end):
+def getTransactionByDateAndCat(pnc_api_token, start, end, category=None):
     header = dict(header_dict)
     param = {}
    
@@ -95,6 +103,8 @@ def getTransactionByDate(pnc_api_token, start, end):
     header['X-Authorization'] = 'Bearer ' + pnc_api_token
     param['startDate'] = start
     param['endDate'] = end
+    if category is not None:
+        param['mccCode'] = mccCode_dict[category]
     page = 0
     total = 0.0 
     while True:
@@ -126,8 +136,8 @@ def hello():
     pnc_api_token = login('mayduncan323', 'mayduncan323')
     print pnc_api_token
     #return str(getTransactionByCat('Book'))
-    return str(getAccounts(pnc_api_token))
-    #return str(getTransactionAmount('week'))
+    #return str(getAccounts(pnc_api_token))
+    return str(getTransactionAmount(pnc_api_token, timespan='week', category='Book'))
     #return str(getTransactionByDate(pnc_api_token, 0, 10, '2017-01-01T00:00:00.000Z', '2017-05-04T13:13:51.048Z'))
     #return getAccounts(pnc_api_token, 0, 10)
     #return "Hello"
@@ -135,5 +145,7 @@ def hello():
 
 if __name__ == "__main__":
     #pnc_api_token = login('mayduncan323', 'mayduncan323')['token']
+    s = requests.session()
+    s.keep_alive = False
     app.run()
     
