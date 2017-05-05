@@ -44,7 +44,6 @@ def start_skill():
     return question(welcome_message)
 
 
-
 @ask.intent("BalanceIntent", mapping={'account_type': 'AccountType'})
 def checkBalance(account_type):
     bal = web.getAccounts(pnc_api_token)
@@ -55,9 +54,9 @@ def checkBalance(account_type):
     else:
         bal = bal['STANDARD_CHECKING']
         account_type = 'standard checking'
-    stat = ' '.join(['Your', account_type, 'balance is'])
-    pass_parameters(stats)
-    return question(' '.join([stat, ' . ', str(bal), ' . ', 'anything else I can help you'])).reprompt("I didn't get that. Can you say it again?")
+    stat = ' '.join(['Your', account_type, 'balance is', ' . ', str(bal), ' . ', 'anything else I can help you'])
+    pass_parameters(stat)
+    return question(stat).reprompt("I didn't get that. Can you say it again?")
 
 
 # js = json.loads('{"version": "1.0", "response": {"outputSpeech": {"type": "PlainText","text": "Your standard checking balance is  .  5000.0  .  anything else I can help you"},"shouldEndSession": false},"sessionAttributes": {}}')
@@ -76,9 +75,8 @@ def checkTransaction(time_span, transaction_type):
         stat = ' '.join(['You spent . ', str(bal), 'today on', transaction_type, ' . ', 'anything else I can help you'])
     else:
         stat = ' '.join(['You spent . ', str(bal), 'last', time_span, 'on', transaction_type, ' . ', 'anything else I can help you'])
-    pass_parameters(stats)
+    pass_parameters(stat)
     return question(stat).reprompt("I didn't get that. Can you say it again?")
-
 
 
 @ask.intent("FAQIntent")
@@ -90,7 +88,7 @@ def FAQ():
 def lost_card_handler():
     answer = 'If your card has been lost or stolen, contact us immediately at one of the following phone numbers. . Personal Debit Cards . 1 888 762 2265 . Virtual Wallet . 1 800 352 2255 . Business Debit Cards . 1 877 287 2654 . PNC Premier Traveler Visa Signature Credit Card . 1 877 588 3602 . PNC Premier Traveler Reserve Visa Signature credit card . 1 877 631 8996'
     stat = ' '.join([answer, ' . ', 'anything else I can help you'])
-    pass_parameters(stats)
+    pass_parameters(stat)
     return question(stat).reprompt("I didn't get that. Can you say it again?")
 
 
@@ -99,12 +97,12 @@ def adviceWealth():
     # get balance from saving account
     bal = 5000
 
-    #interest rate for saving is constant for all balance
-    #ref https://apps.pnc.com/rates/servlet/DepositRatesSearch?productGroup=mmarket
+    # interest rate for saving is constant for all balance
+    # ref https://apps.pnc.com/rates/servlet/DepositRatesSearch?productGroup=mmarket
     ir = 0.0001
 
-    #interest rate for performance checking in money market
-    #ref https://apps.pnc.com/rates/servlet/DepositRatesSearch?productGroup=mmarket
+    # interest rate for performance checking in money market
+    # ref https://apps.pnc.com/rates/servlet/DepositRatesSearch?productGroup=mmarket
     if bal < 10000:
         mmir = 0.0025
     elif bal < 25000:
@@ -116,14 +114,12 @@ def adviceWealth():
     else:
         mmir = 0.0035
 
-    ie = ir*bal
-    mmie = mmir*bal
+    ie = ir * bal
+    mmie = mmir * bal
 
     stat = ' '.join(['You have a healthy portfolio of ', str(bal), 'dollars in saving. You are getting', str(ie), 'interet earnings every year. You can do even greater with money market and your interest earning will be', str(mmie), 'dollars per year. . anything else I can help you'])
-    pass_parameters(stats)
+    pass_parameters(stat)
     return question(stat).reprompt("I didn't get that. Can you say it again?")
-
-
 
 
 @ask.intent("BudgetIntent", mapping={'budget_amount': 'BudgetAmount', 'transaction_type': 'TransactionCategory'})
@@ -133,29 +129,27 @@ def setBudget(budget_amount, transaction_type):
     # elif not transaction_type:
     #     return question('what is the amount')#.prompt()
     stat = ' '.join([answer, ' . ', 'anything else I can help you'])
-    pass_parameters(stats)
+    pass_parameters(stat)
     return question(stat).reprompt("what is the amount?")
 
 
-
 def alexa_stop_cancel():
-  if session.new:
-    return statement("how can I help you")
-  else:
-    return statement("bye bye")
+    if session.new:
+        return statement("how can I help you")
+    else:
+        return statement("bye bye")
+
 
 # Handle the AMAZON.StopIntent intent.
 @ask.intent('AMAZON.StopIntent')
 def alexa_stop():
-  return alexa_stop_cancel()
+    return alexa_stop_cancel()
 
 
 # Handle the AMAZON.CancelIntent intent.
 @ask.intent('AMAZON.CancelIntent')
 def alexa_cancel():
-  return alexa_stop_cancel()
-
-
+    return alexa_stop_cancel()
 
 
 @ask.intent("BudgetAddAmountIntent", mapping={'budget_amount': 'BudgetAmount'})
@@ -180,7 +174,6 @@ def triggerBudget():
     return question('which category you want to add the budget')
 
 
-
 @ask.intent("BudgetAddCategoryIntent", mapping={'transaction_type': 'TransactionCategory'})
 def addCatBudget(transaction_type):
     global transaction_type_global
@@ -196,7 +189,7 @@ def twitter_share():
     print 'SHARE'
     budget_amount = session.attributes['budget_amount']
     transaction_type_global = session.attributes['transaction_type_global']
-    print 'AMO',budget_amount, 'TYPE',transaction_type_global
+    print 'AMO', budget_amount, 'TYPE', transaction_type_global
     tweet('I have set a ${} budget for {} in my PNC account through out cute Alexa PNC Assistant'.format(budget_amount, transaction_type_global))
     stat = 'You have set a ${} budget for {} in my PNC account through out cute Alexa PNC Assistant . anything else I can help you'.format(budget_amount, transaction_type_global)
     return question(stat)
@@ -208,11 +201,12 @@ def no_intent():
     return question(stat)
 
 
-
 def pass_parameters(text):
     DATA = {}
     DATA['text'] = text
+    print DATA
     r = requests.post('https://apifestdemo.herokuapp.com/demo/AlexaResponse', data=DATA)
+    print r.text
     print r
 
 
