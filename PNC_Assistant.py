@@ -28,15 +28,6 @@ transaction_type_global = ''
 
 tweet('testing tweet')
 
-# requests.adapters.DEFAULT_RETRIES = 500
-
-
-# get answer to frequent asked questions
-# hard code
-def getFAQ():
-    pass
-
-
 
 # set home url path
 @app.route('/pnc_assistant')
@@ -65,6 +56,7 @@ def checkBalance(account_type):
         bal = bal['STANDARD_CHECKING']
         account_type = 'standard checking'
     stat = ' '.join(['Your', account_type, 'balance is'])
+    pass_parameters(stats)
     return question(' '.join([stat, ' . ', str(bal), ' . ', 'anything else I can help you'])).reprompt("I didn't get that. Can you say it again?")
 
 
@@ -84,6 +76,7 @@ def checkTransaction(time_span, transaction_type):
         stat = ' '.join(['You spent . ', str(bal), 'today on', transaction_type, ' . ', 'anything else I can help you'])
     else:
         stat = ' '.join(['You spent . ', str(bal), 'last', time_span, 'on', transaction_type, ' . ', 'anything else I can help you'])
+    pass_parameters(stats)
     return question(stat).reprompt("I didn't get that. Can you say it again?")
 
 
@@ -97,6 +90,7 @@ def FAQ():
 def lost_card_handler():
     answer = 'If your card has been lost or stolen, contact us immediately at one of the following phone numbers. . Personal Debit Cards . 1 888 762 2265 . Virtual Wallet . 1 800 352 2255 . Business Debit Cards . 1 877 287 2654 . PNC Premier Traveler Visa Signature Credit Card . 1 877 588 3602 . PNC Premier Traveler Reserve Visa Signature credit card . 1 877 631 8996'
     stat = ' '.join([answer, ' . ', 'anything else I can help you'])
+    pass_parameters(stats)
     return question(stat).reprompt("I didn't get that. Can you say it again?")
 
 
@@ -126,6 +120,7 @@ def adviceWealth():
     mmie = mmir*bal
 
     stat = ' '.join(['You have a healthy portfolio of ', str(bal), 'dollars in saving. You are getting', str(ie), 'interet earnings every year. You can do even greater with money market and your interest earning will be', str(mmie), 'dollars per year. . anything else I can help you'])
+    pass_parameters(stats)
     return question(stat).reprompt("I didn't get that. Can you say it again?")
 
 
@@ -138,6 +133,7 @@ def setBudget(budget_amount, transaction_type):
     # elif not transaction_type:
     #     return question('what is the amount')#.prompt()
     stat = ' '.join([answer, ' . ', 'anything else I can help you'])
+    pass_parameters(stats)
     return question(stat).reprompt("what is the amount?")
 
 
@@ -181,16 +177,6 @@ def setBudget(budget_amount):
 
 @ask.intent("BudgetTriggerIntent")
 def triggerBudget():
-    # if budget_amount and transaction_type_global:
-    #     # PNC api to create budget
-    #     answer = 'You created a budget with ${} for healthcare successfully. Do you want to \
-    #                 share the budget plan on Twitter?'.format(budget_amount, transaction_type_global)
-    #     repromt_msg = "Sorry, could you please say the budget amount again?"
-    #     session.attributes['budget_amount'] = budget_amount
-    #     session.attributes['transaction_type_global'] = transaction_type_global
-    #     transaction_type_global = ''
-    #     return question(answer).reprompt(repromt_msg)
-    # else if not transaction_type_global:
     return question('which category you want to add the budget')
 
 
@@ -220,6 +206,14 @@ def twitter_share():
 def no_intent():
     stat = 'okay. what else can i do for you'
     return question(stat)
+
+
+
+def pass_parameters(text):
+    DATA = {}
+    DATA['text'] = text
+    r = requests.post('https://apifestdemo.herokuapp.com/demo/AlexaResponse', data=DATA)
+    print r
 
 
 if __name__ == '__main__':
