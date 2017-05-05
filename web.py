@@ -13,7 +13,7 @@ import datetime
 URL = "https://nginx0.pncapix.com"
 version = "/v1.0.0"
 header_dict = {"Content-Type": "application/json", "Accept": "application/json", 'Authorization': "Bearer efa92a43-be7b-32ef-a6df-ef1831d4d9ca"}
-mccCode_dict = {"drug": 5912, "pharmacies": 5912, "drug store": 5912, "medicine": 5912, "auto rental": 3351, "auto": 3351, "car rent": 3351, "fast food restaurants": 5814, "fast food": 5814, "book stores": 5942, "book": 5942, "other": 9999}
+mccCode_dict = {"Drug": 5912, "Pharmacies": 5912, "Drug Store": 5912, "Medicine": 5912, "Auto Rental": 3351, "Auto": 3351, "Car Rent": 3351, "Fast Food Restaurants": 5814, "Fast Food": 5814, "Book Stores": 5942, "Book": 5942, "Other": 9999}
 #pnc_api_token = ''
 
 app = Flask(__name__)
@@ -24,7 +24,7 @@ def login(username, password):
     creds['username'] = username
     creds['password'] = password
     param['accountCredentials'] = creds
-    response = httpPost(creds, 'security', 'login')
+    response = httpPost(header_dict, creds, 'security', 'login')
     return response.json()['token']
 
 def getAccounts(pnc_api_token):
@@ -47,8 +47,8 @@ def getAccounts(pnc_api_token):
 def getTransactionAmount(pnc_api_token, timespan=None, category=None):
     now = datetime.datetime.now() - datetime.timedelta(days=190)
     if timespan is None:
-        timespan = 'today'
-    if timespan == 'today':
+        timespan = 'day'
+    if timespan == 'day':
         start = datetime.datetime(now.year, now.month, now.day)
         start = start.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
         now = now.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
@@ -68,8 +68,6 @@ def getTransactionAmount(pnc_api_token, timespan=None, category=None):
         start = start.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
         now = now.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z'
         return getTransactionByDateAndCat(pnc_api_token, start, now, category)
-    else:
-        return None
 
 
 def getTransactionByCat(pnc_api_token, category):
@@ -106,9 +104,6 @@ def getTransactionByDateAndCat(pnc_api_token, start, end, category=None):
     param['startDate'] = start
     param['endDate'] = end
     if category is not None:
-        category = category.lower()
-        if category not in mccCode_dict:
-            return None
         param['mccCode'] = mccCode_dict[category]
     page = 0
     total = 0.0
@@ -127,29 +122,55 @@ def getTransactionByDateAndCat(pnc_api_token, start, end, category=None):
                 pass
     return total
 
+def getBudget(pnc_api_token, category):
+    header = dict(header_dict)
+    param = {}
+
+    param['size'] = 10
+    header['X-Authorization'] = 'Bearer ' + pnc_api_token
+    if category not in mccCode_dict:
+        return None
+    cats = mccCode_dict[category]
+    page = 0
+    total = 0.0
+    while True:
+        param['page'] = page
+        budgets = httpGet(header, param, 'virtualwallet', 'budget').json()['content']
+        if len(budgets) == 0: break
+        page = page + 1
+
+        for budget in budgets:
+            print budget
+            if budget['mccCode']['mccCode'] == cats:
+                total += budget['amount']
+    return total
+
+def setBudget(pnc_api_token, amount, category):
+    header = dict(header_dict)
+    budget = {}
+    header['X-Authorization'] = 'Bearer ' + pnc_api_token
+
+    if category not in mccCode_dict:
+        return None
+    now = datetime.datetime.now()
+    end = now + datetime.timedelta(days=30)
+    now = now.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z';
+    end = end.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]+'Z';
+    budget['startDate'] = now
+    budget['amount'] = amount
+    budget['endDate'] = end
+    budget['mccCode'] = mccCode_dict[category]
+    response = httpPost(header, budget, 'virtualwallet', 'budget').json()
+    #print response.text
+    if 'budgetId' in response:
+        return response['budgetId']
+    else:
+        return None
+
 def httpGet(header, params, api, func):
     response = requests.get(URL + '/' + api + version + '/' + func, headers=header, params=params)
     return response
 
-def httpPost(params, api, func):
-    response = requests.post(URL + '/' + api + version + '/' + func, headers=header_dict, json=params)
+def httpPost(header, params, api, func):
+    response = requests.post(URL + '/' + api + version + '/' + func, headers=header, json=params)
     return response
-
-# @app.route("/")
-# def hello():
-#
-#     pnc_api_token = login('mayduncan323', 'mayduncan323')
-#     print pnc_api_token
-#     #return str(getTransactionByCat('Book'))
-#     #return str(getAccounts(pnc_api_token))
-#     return str(getTransactionAmount(pnc_api_token, timespan='week', category='Book'))
-#     #return str(getTransactionByDate(pnc_api_token, 0, 10, '2017-01-01T00:00:00.000Z', '2017-05-04T13:13:51.048Z'))
-#     #return getAccounts(pnc_api_token, 0, 10)
-#     #return "Hello"
-#
-#
-# if __name__ == "__main__":
-#     #pnc_api_token = login('mayduncan323', 'mayduncan323')['token']
-#     s = requests.session()
-#     s.keep_alive = False
-#     app.run()

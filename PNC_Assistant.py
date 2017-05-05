@@ -6,6 +6,7 @@ import requests
 import time
 import unidecode
 import web
+from socialMediaHelper import tweet
 
 # sample username and password
 USERNAME = 'mayduncan323'
@@ -23,6 +24,9 @@ app = Flask(__name__)
 # give basic endpoint, can be flask skill/program endpoint
 ask = Ask(app, "/pnc_assistant")
 
+transaction_type_global = ''
+
+tweet('testing tweet')
 
 # requests.adapters.DEFAULT_RETRIES = 500
 
@@ -93,7 +97,7 @@ def FAQ():
 def lost_card_handler():
     answer = 'If your card has been lost or stolen, contact us immediately at one of the following phone numbers. . Personal Debit Cards . 1 888 762 2265 . Virtual Wallet . 1 800 352 2255 . Business Debit Cards . 1 877 287 2654 . PNC Premier Traveler Visa Signature Credit Card . 1 877 588 3602 . PNC Premier Traveler Reserve Visa Signature credit card . 1 877 631 8996'
     stat = ' '.join([answer, ' . ', 'anything else I can help you'])
-    return question(stat)
+    return question(stat).reprompt("I didn't get that. Can you say it again?")
 
 
 @ask.intent("AdviceIntent")
@@ -128,31 +132,13 @@ def adviceWealth():
 
 
 @ask.intent("BudgetIntent", mapping={'budget_amount': 'BudgetAmount', 'transaction_type': 'TransactionCategory'})
-def setBudget():
+def setBudget(budget_amount, transaction_type):
     if budget_amount and transaction_type:
-        answer = 'ok. budget is set succesfully'
-    elif not transaction_type:
-        return question('what is the amount').prompt()
+        answer = 'ok. budget for' + transaction_type + 'is set succesfully'
+    # elif not transaction_type:
+    #     return question('what is the amount')#.prompt()
     stat = ' '.join([answer, ' . ', 'anything else I can help you'])
-    return question(stat).reprompt("I didn't get that. Can you say it again?")
-
-
-
-# handle user input yes or no response
-# user input is intent
-@ask.intent("YesIntent")
-def share_headlines():
-    # grab the headline
-    headlines = get_headlines()
-    headline_msg = 'The current world news headlines are {}'.format(headlines)
-    # statement tell you sth
-    return statement(headline_msg)
-
-
-@ask.intent("NoIntent")
-def no_intent():
-    bye_text = 'I am not sure why you asked me to run then, but okay... bye'
-    return statement(bye_text)
+    return question(stat).reprompt("what is the amount?")
 
 
 
@@ -174,25 +160,66 @@ def alexa_cancel():
   return alexa_stop_cancel()
 
 
-# Handle the AMAZON.NoIntent intent.
-@ask.intent('AMAZON.NoIntent')
-def alexa_no():
-  return alexa_stop_cancel()
 
 
-# def login(username, password):
-#     creds = {}
-#     param = {}
-#     creds['username'] = username
-#     creds['password'] = password
-#     param['accountCredentials'] = creds
-#     response = httpPost(creds, 'security', 'login')
-#     return response.text
-#
-#
-# def httpPost(params, api, func):
-#     response = requests.post(URL + '/' + api + version + '/' + func, headers=header_dict, json=params)
-#     return response
+@ask.intent("BudgetAddAmountIntent", mapping={'budget_amount': 'BudgetAmount'})
+def setBudget(budget_amount):
+    global transaction_type_global
+    if budget_amount and transaction_type_global:
+        web.setBudget(pnc_api_token, budget_amount, transaction_type_global)
+        # PNC api to create budget
+        answer = 'You created a budget with ${} for healthcare successfully. Do you want to \
+                    share the budget plan on Twitter?'.format(budget_amount, transaction_type_global)
+        repromt_msg = "Sorry, could you please say the budget amount again?"
+        session.attributes['budget_amount'] = budget_amount
+        session.attributes['transaction_type_global'] = transaction_type_global
+        transaction_type_global = ''
+        return question(answer).reprompt(repromt_msg)
+    # if not transaction_type_global:
+    #     return question('which category you want to add')
+
+
+@ask.intent("BudgetTriggerIntent")
+def triggerBudget():
+    # if budget_amount and transaction_type_global:
+    #     # PNC api to create budget
+    #     answer = 'You created a budget with ${} for healthcare successfully. Do you want to \
+    #                 share the budget plan on Twitter?'.format(budget_amount, transaction_type_global)
+    #     repromt_msg = "Sorry, could you please say the budget amount again?"
+    #     session.attributes['budget_amount'] = budget_amount
+    #     session.attributes['transaction_type_global'] = transaction_type_global
+    #     transaction_type_global = ''
+    #     return question(answer).reprompt(repromt_msg)
+    # else if not transaction_type_global:
+    return question('which category you want to add the budget')
+
+
+
+@ask.intent("BudgetAddCategoryIntent", mapping={'transaction_type': 'TransactionCategory'})
+def addCatBudget(transaction_type):
+    global transaction_type_global
+    transaction_type_global = transaction_type
+    question_phrase = "People in similar financial situation in your area, I suggest you to set {} dollars for {}. What amount do you want to set?".format(500, transaction_type)
+    return question(question_phrase)
+
+
+# handle user input yes or no response
+# user input is intent
+@ask.intent("MyYesIntent")
+def twitter_share():
+    print 'SHARE'
+    budget_amount = session.attributes['budget_amount']
+    transaction_type_global = session.attributes['transaction_type_global']
+    print 'AMO',budget_amount, 'TYPE',transaction_type_global
+    tweet('I have set a ${} budget for {} in my PNC account through out cute Alexa PNC Assistant'.format(budget_amount, transaction_type_global))
+    stat = 'You have set a ${} budget for {} in my PNC account through out cute Alexa PNC Assistant . anything else I can help you'.format(budget_amount, transaction_type_global)
+    return question(stat)
+
+
+@ask.intent("MyNoIntent")
+def no_intent():
+    stat = 'okay. what else can i do for you'
+    return question(stat)
 
 
 if __name__ == '__main__':
