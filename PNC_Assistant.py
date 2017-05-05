@@ -26,7 +26,7 @@ ask = Ask(app, "/pnc_assistant")
 
 transaction_type_global = ''
 
-tweet('testing tweet')
+# tweet('testing tweet')
 
 # requests.adapters.DEFAULT_RETRIES = 500
 
