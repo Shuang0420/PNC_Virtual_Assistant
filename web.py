@@ -13,7 +13,7 @@ import datetime
 URL = "https://nginx0.pncapix.com"
 version = "/v1.0.0"
 header_dict = {"Content-Type": "application/json", "Accept": "application/json", 'Authorization': "Bearer efa92a43-be7b-32ef-a6df-ef1831d4d9ca"}
-mccCode_dict = {"Drug": 5912, "Pharmacies": 5912, "Drug Store": 5912, "Medicine": 5912, "Auto Rental": 3351, "Auto": 3351, "Car Rent": 3351, "Fast Food Restaurants": 5814, "Fast Food": 5814, "Book Stores": 5942, "Book": 5942, "Other": 9999}
+mccCode_dict = {"drug": 5912, "pharmacies": 5912, "drug store": 5912, "medicine": 5912, "auto rental": 3351, "auto": 3351, "car rent": 3351, "fast food restaurants": 5814, "fast food": 5814, "book stores": 5942, "book": 5942, "other": 9999}
 #pnc_api_token = ''
 
 app = Flask(__name__)
@@ -174,3 +174,24 @@ def httpGet(header, params, api, func):
 def httpPost(header, params, api, func):
     response = requests.post(URL + '/' + api + version + '/' + func, headers=header, json=params)
     return response
+
+
+def getBalanceAndLimit(pnc_api_token):
+    header = dict(header_dict)
+    param = {}
+    
+    param['size'] = 10
+    header['X-Authorization'] = 'Bearer ' + pnc_api_token
+    page = 0
+    accounts = {}
+    while True:
+        param['page'] = page
+        response = httpGet(header, param, 'accounts', 'account').json()['content']
+        if len(response) == 0: 
+            break
+        page = page + 1
+        for account in response:
+            acType = account['accountType']['accountType']
+            if 'CREDIT' in acType:
+                accounts[acType] = (account['balance'], account['accountType']['creditLimit'])
+    return accounts

@@ -7,6 +7,8 @@ import time
 import unidecode
 import web
 from socialMediaHelper import tweet
+from creditBooster import creditTests
+import unirest
 
 # sample username and password
 USERNAME = 'mayduncan323'
@@ -38,9 +40,11 @@ def homepage():
 @ask.launch
 def start_skill():
     # it will say
-    #welcome_message = 'Hello there, just a quick reminder. you have a car loan payment of 3000 dollars due this Saturday . . what can I do for you today?'
-    welcome_message = 'Hello there.'
+    welcome_message = 'Hello there, just a quick reminder. '# you have a car loan payment of 3000 dollars due this Saturday . . what can I do for you today?
+    # welcome_message = 'Hello there.'
     # question expect response
+    pass_parameter('none')
+    pass_response(welcome_message)
     return question(welcome_message)
 
 
@@ -55,7 +59,8 @@ def checkBalance(account_type):
         bal = bal['STANDARD_CHECKING']
         account_type = 'standard checking'
     stat = ' '.join(['Your', account_type, 'balance is', ' . ', str(bal), ' . ', 'anything else I can help you'])
-    pass_parameters(stat)
+    pass_parameter(account_type)
+    pass_response(stat)
     return question(stat).reprompt("I didn't get that. Can you say it again?")
 
 
@@ -75,20 +80,18 @@ def checkTransaction(time_span, transaction_type):
         stat = ' '.join(['You spent . ', str(bal), 'today on', transaction_type, ' . ', 'anything else I can help you'])
     else:
         stat = ' '.join(['You spent . ', str(bal), 'last', time_span, 'on', transaction_type, ' . ', 'anything else I can help you'])
-    pass_parameters(stat)
+    pass_parameter(time_span + '\t' + transaction_type)
+    pass_response(stat)
     return question(stat).reprompt("I didn't get that. Can you say it again?")
 
-
-@ask.intent("FAQIntent")
-def FAQ():
-    pass
 
 
 @ask.intent("LostCardIntent")
 def lost_card_handler():
-    answer = 'If your card has been lost or stolen, contact us immediately at one of the following phone numbers. . Personal Debit Cards . 1 888 762 2265 . Virtual Wallet . 1 800 352 2255 . Business Debit Cards . 1 877 287 2654 . PNC Premier Traveler Visa Signature Credit Card . 1 877 588 3602 . PNC Premier Traveler Reserve Visa Signature credit card . 1 877 631 8996'
+    answer = 'If your card has been lost or stolen, contact us immediately at one of the following phone numbers. . Personal Debit Cards . 1 888 762 2265 . Virtual Wallet . 1 800 352 2255'
     stat = ' '.join([answer, ' . ', 'anything else I can help you'])
-    pass_parameters(stat)
+    pass_parameter('none')
+    pass_response(stat)
     return question(stat).reprompt("I didn't get that. Can you say it again?")
 
 
@@ -118,7 +121,8 @@ def adviceWealth():
     mmie = mmir * bal
 
     stat = ' '.join(['You have a healthy portfolio of ', str(bal), 'dollars in saving. You are getting', str(ie), 'interet earnings every year. You can do even greater with money market and your interest earning will be', str(mmie), 'dollars per year. . anything else I can help you'])
-    pass_parameters(stat)
+    pass_parameter('none')
+    pass_response(stat)
     return question(stat).reprompt("I didn't get that. Can you say it again?")
 
 
@@ -129,7 +133,8 @@ def setBudget(budget_amount, transaction_type):
     # elif not transaction_type:
     #     return question('what is the amount')#.prompt()
     stat = ' '.join([answer, ' . ', 'anything else I can help you'])
-    pass_parameters(stat)
+    pass_parameter(str(budget_amount) + '\t' + transaction_type)
+    pass_response(stat)
     return question(stat).reprompt("what is the amount?")
 
 
@@ -164,6 +169,8 @@ def setBudget(budget_amount):
         session.attributes['budget_amount'] = budget_amount
         session.attributes['transaction_type_global'] = transaction_type_global
         transaction_type_global = ''
+        pass_parameter(budget_amount)
+        pass_response(answer)
         return question(answer).reprompt(repromt_msg)
     # if not transaction_type_global:
     #     return question('which category you want to add')
@@ -171,14 +178,19 @@ def setBudget(budget_amount):
 
 @ask.intent("BudgetTriggerIntent")
 def triggerBudget():
-    return question('which category you want to add the budget')
+    stat = 'which category you want to add the budget'
+    pass_parameter('none')
+    pass_response(stat)
+    return question(stat)
 
 
 @ask.intent("BudgetAddCategoryIntent", mapping={'transaction_type': 'TransactionCategory'})
 def addCatBudget(transaction_type):
     global transaction_type_global
     transaction_type_global = transaction_type
-    question_phrase = "People in similar financial situation in your area, I suggest you to set {} dollars for {}. What amount do you want to set?".format(500, transaction_type)
+    question_phrase = "Actually, according to people in similar financial situation in pittsburgh, I suggest you to set {} dollars for {}. What amount do you want to set?".format(500, transaction_type)
+    pass_parameter(transaction_type)
+    pass_response(question_phrase)
     return question(question_phrase)
 
 
@@ -192,22 +204,90 @@ def twitter_share():
     print 'AMO', budget_amount, 'TYPE', transaction_type_global
     tweet('I have set a ${} budget for {} in my PNC account through out cute Alexa PNC Assistant'.format(budget_amount, transaction_type_global))
     stat = 'You have set a ${} budget for {} in my PNC account through out cute Alexa PNC Assistant . anything else I can help you'.format(budget_amount, transaction_type_global)
+    pass_parameter('none')
+    pass_response(stat)
     return question(stat)
 
 
 @ask.intent("MyNoIntent")
 def no_intent():
     stat = 'okay. what else can i do for you'
+    pass_parameter('none')
+    pass_response(stat)
     return question(stat)
 
 
-def pass_parameters(text):
+def pass_response(text):
     DATA = {}
     DATA['text'] = text
     print DATA
-    r = requests.post('https://apifestdemo.herokuapp.com/demo/AlexaResponse', data=DATA)
-    print r.text
-    print r
+    # r = unirest.post('https://apifestdemo.herokuapp.com/demo/AlexaResponse', headers={"Accept": "application/json"}, json=json.dumps(DATA))
+    url = "https://apifestdemo.herokuapp.com/demo/AlexaResponse"
+    payload = json.dumps(DATA)
+    headers = {
+    'content-type': "application/json",
+    'cache-control': "no-cache",
+    'postman-token': "732e5426-fe44-2c9b-c626-429ec6fbe487"
+    }
+    response = requests.request("POST", url, data=payload, headers=headers)
+
+    # r = requests.post('https://apifestdemo.herokuapp.com/demo/AlexaResponse', json=DATA)
+    # print r
+
+
+def pass_parameter(text):
+    DATA = {}
+    DATA['text'] = text
+    DATA['user'] = 'awesome'
+    print DATA
+    # r = unirest.post('https://apifestdemo.herokuapp.com/demo/userRequest', headers={"Accept": "application/json"}, json=json.dumps(DATA))
+    url = "https://apifestdemo.herokuapp.com/demo/AlexaResponse"
+    # payload = "{\n\t\"user\": \"user\",\n\t\"text\": \"PM said I need to get some better test data to test it.\"\n}"
+    payload = json.dumps(DATA)
+    headers = {
+    'content-type': "application/json",
+    'cache-control': "no-cache",
+    'postman-token': "732e5426-fe44-2c9b-c626-429ec6fbe487"
+    }
+    response = requests.request("POST", url, data=payload, headers=headers)
+
+
+    # r = requests.post('https://apifestdemo.herokuapp.com/demo/userRequest', json=DATA)
+    # print r   
+
+
+@ask.intent("BudgetCheckIntent", mapping={'category': 'TransactionCategory'})
+def checkBudget(category):
+    print 'category',category
+    if category:
+        try:
+            budget = web.getBudget(pnc_api_token, category)        
+        except:
+            question("Error getting the budget")
+        stat = 'Your budget for category %s is %d' % (category, int(budget))
+        pass_parameter(category)
+        pass_response(stat)
+        return question(stat).reprompt("I didn't get that. Can you say it again?")
+    else:
+        stat = "I didn't get that. Can you say it again?"
+        pass_parameter('none')
+        pass_response(stat)
+        return question(stat)
+
+
+
+@ask.intent("CreditBooster")
+def creditScore():
+    amountOwed = 0  
+    dic = web.getBalanceAndLimit(pnc_api_token)
+    for key in dic:
+        amountOwed += dic[key][0]
+    #amountOwed = sum(web.getBalanceAndLimit(pnc_api_token).values())
+    creditLimit = amountOwed * 3
+    stat = creditTests(amountOwed, creditLimit)
+    pass_parameter('none')
+    pass_response(stat)
+    return statement(stat)
 
 
 if __name__ == '__main__':
