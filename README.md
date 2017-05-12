@@ -8,12 +8,12 @@ Quick Tutorial [Alexa 开发新技能](http://www.shuang0420.com/2017/05/02/Alex
 - unirest == 1.1.7
 
 ## Usage
-- Start the server
-  $ python PNC_Assistant.py
-- Expose local server to the internet
-  $ ./ngrok http 5000
-- Go to [AMAZON DEVELOPER PAGE](https://developer.amazon.com/edw/home.html#/skill/amzn1.ask.skill.368b1dd7-de5b-4435-b62f-cc82c586c78d/en_US/configuration) and add the skill
-- Connect with your Alexa and have following conversation.
+1. Start the server
+  <pre>$ python PNC_Assistant.py</pre>
+2. Expose local server to the internet
+  <pre>$ ./ngrok http 5000</pre>
+3. Go to [AMAZON DEVELOPER](https://developer.amazon.com/edw/home.html#/skill/amzn1.ask.skill.368b1dd7-de5b-4435-b62f-cc82c586c78d/en_US/configuration) and add the skill
+4. Connect with your Alexa and have following conversation.
 
 However, you may have problem with running the server because you need to update token for accessing [PNC APIFEST](https://pstm0.pncapix.com/store/apis/info?name=Accounts&version=v1.0.0&provider=admin). Please log in to [PNC APIFEST](https://pstm0.pncapix.com/store/apis/info?name=Accounts&version=v1.0.0&provider=admin) and click subscribe button to get the access token, and modify header_dict in web.py.
 
