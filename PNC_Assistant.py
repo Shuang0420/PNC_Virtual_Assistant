@@ -13,9 +13,7 @@ import unirest
 # sample username and password
 USERNAME = 'mayduncan323'
 PASSWORD = 'mayduncan323'
-URL = "https://nginx0.pncapix.com"
-version = "/v1.0.0"
-header_dict = {"Content-Type": "application/json", "Accept": "application/json", 'Authorization': "Bearer efa92a43-be7b-32ef-a6df-ef1831d4d9ca"}
+
 account_types = {"savings":"STANDARD_SAVINGS", "checking":"STANDARD_CHECKING", "credit":"PNC_CORE_VISA_CREDIT_CARD", "virtual wallet spend":"VIRTUAL_WALLET_SPEND", "virtual wallet reserve":"VIRTUAL_WALLET_RESERVE",
 "virtual wallet growth":"VIRTUAL_WALLET_GROWTH"}
 
@@ -27,8 +25,6 @@ app = Flask(__name__)
 ask = Ask(app, "/pnc_assistant")
 
 transaction_type_global = ''
-
-# tweet('testing tweet')
 
 
 # set home url path

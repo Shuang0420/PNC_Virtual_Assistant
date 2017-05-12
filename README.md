@@ -10,8 +10,11 @@ Quick Tutorial [Alexa 开发新技能](http://www.shuang0420.com/2017/05/02/Alex
 ## Usage
 Connect with your Alexa and have following conversation.
 
+However, you may have problem with running the server because you need to update token for accessing [PNC APIFEST](https://pstm0.pncapix.com/store/apis/info?name=Accounts&version=v1.0.0&provider=admin). Please log in to [PNC APIFEST](https://pstm0.pncapix.com/store/apis/info?name=Accounts&version=v1.0.0&provider=admin) and click subscribe button to get the access token, and modify header_dict in web.py.
+
 
 ### Balance/Transaction checking
+```
 User: Alexa, start PNC assistant.
 Alexa: Hello there, just a quick reminder. You have a car loan payment of 3000 dollars due this Saturday. What can I do for you today?
 
@@ -20,15 +23,19 @@ Alexa: Your standard checking account balance is {NUMBER} dollars. Anything else
 
 User: Alexa, how much I spend on Fast Food today(/last week/last month/last year)?
 Alexa: You spent {NUMBER} dollars today(/last week/last month/last year). Anything else I can help you?
+```
 
 ### Q&A
+```
 User: Alexa, I lost my card, what should I do?
 Alexa: If your card has been lost or stolen, contact us immediately at one of the following phone numbers.
 Personal Debit Cards 1-888-PNC-BANK (1-888-762-2265)
+```
 
 
 ### Personal Financial Expert
-#### Add a budget plan:
+#### Add a budget plan
+```
 User: Alexa, I want to set a new budget?
 Alexa: Which category you want to add the budget?
 
@@ -40,21 +47,27 @@ Alexa: Thank you. You created a budget with $300 for Healthcare successfully. Do
 
 User: Ok please tweet.
 Alexa: You have set a ${NUMBER} dollars budget for {CATEGORY} in your PNC account through cute Alexa PNC Assistant. Anything else I can help you?
-
+```
 
 #### Check budget
+```
 User: Please tell me my budget for book(/{CATEGORY})?
 Alexa: Your budget for {CATEGORY} is {NUMBER} dollars. Anything else I can help you?
+```
 
 
 #### Ask for Wealth Management Advice
+```
 User: Alexa, how to invest my money?
 Alexa: You have a healthy portfolio of {NUMBER} dollars in saving. You are getting {NUMBER} interest earnings every year. You can do even greater with money market and your interest earning will be {NUMBER} dollars per year. Anything else I can help you?
+```
 
 
 ### Credit Score Boosting
+```
 User: Alexa, how can I boost my credit score?
 Alexa: Check completed. You are doing a great job in passing {NUMBER} out of 5 credit payment tests.
+```
 
 
 
