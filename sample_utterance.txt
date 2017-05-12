@@ -1,4 +1,0 @@
-BalanceIntent what is my balance of {AccountType}
-TransactionIntent check transactions on {TimeSpan}
-TransactionIntent how much do I spend last {timeSpan}
-FAQIntent get frequent asked question

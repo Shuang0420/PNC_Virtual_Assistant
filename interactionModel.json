@@ -1,0 +1,470 @@
+{
+  "intents": [
+    {
+      "name": "AdviceIntent",
+      "samples": [
+        "give me some financial advice",
+        "how to invest my money"
+      ],
+      "slots": []
+    },
+    {
+      "name": "AMAZON.CancelIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.HelpIntent",
+      "samples": []
+    },
+    {
+      "name": "AMAZON.StopIntent",
+      "samples": []
+    },
+    {
+      "name": "BalanceIntent",
+      "samples": [
+        "what is my balance of {AccountType}",
+        "please tell me my account balance",
+        "please tell me my account balance of {AccountType}"
+      ],
+      "slots": [
+        {
+          "name": "AccountType",
+          "type": "Account_type",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "BudgetAddAmountIntent",
+      "samples": [
+        "{BudgetAmount} dollars",
+        "i want to set {BudgetAmount} dollars",
+        "i want to set {BudgetAmount} "
+      ],
+      "slots": [
+        {
+          "name": "BudgetAmount",
+          "type": "AMAZON.NUMBER",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "BudgetAddCategoryIntent",
+      "samples": [
+        "{TransactionCategory} category "
+      ],
+      "slots": [
+        {
+          "name": "TransactionCategory",
+          "type": "Transaction_category",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "BudgetCheckIntent",
+      "samples": [
+        "please tell me my budget for {TransactionCategory} "
+      ],
+      "slots": [
+        {
+          "name": "Account_type",
+          "type": "Account_type",
+          "samples": []
+        },
+        {
+          "name": "Transaction_category",
+          "type": "Transaction_category",
+          "samples": []
+        },
+        {
+          "name": "TransactionCategory",
+          "type": "Transaction_category",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "BudgetTriggerIntent",
+      "samples": [
+        "I want to set a budget of {BudgetAmount} for {TransactionCategory}",
+        "could you add a new budget for me",
+        "i want to add a new budget",
+        "add new budget",
+        "add a new budget for me",
+        "add a new budget in my PNC account"
+      ],
+      "slots": [
+        {
+          "name": "BudgetAmount",
+          "type": "AMAZON.NUMBER",
+          "samples": []
+        },
+        {
+          "name": "TransactionCategory",
+          "type": "Transaction_category",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "CreditBooster",
+      "samples": [
+        "how can i boost my credit score"
+      ],
+      "slots": []
+    },
+    {
+      "name": "FAQIntent",
+      "samples": [
+        "get frequent asked question"
+      ],
+      "slots": [
+        {
+          "name": "AccountId",
+          "type": "AMAZON.NUMBER",
+          "samples": []
+        }
+      ]
+    },
+    {
+      "name": "LostCardIntent",
+      "samples": [
+        "I lost my card. What should I do",
+        "My card is lost. what should I do"
+      ],
+      "slots": []
+    },
+    {
+      "name": "MyNoIntent",
+      "samples": [
+        "please do not",
+        "do not share",
+        "do not tweet"
+      ],
+      "slots": []
+    },
+    {
+      "name": "MyYesIntent",
+      "samples": [
+        "ok please tweet"
+      ],
+      "slots": []
+    },
+    {
+      "name": "TransactionIntent",
+      "samples": [
+        "check transactions on {TimeSpan}",
+        "how much do I spend last {TimeSpan}",
+        "how much do I spend on {TransactionCategory} {TimeSpan}",
+        "how much do I spend last {TimeSpan} on {TransactionCategory} "
+      ],
+      "slots": [
+        {
+          "name": "TimeSpan",
+          "type": "Time_span",
+          "samples": []
+        },
+        {
+          "name": "TransactionCategory",
+          "type": "Transaction_category",
+          "samples": []
+        }
+      ]
+    }
+  ],
+  "types": [
+    {
+      "name": "Account_type",
+      "values": [
+        {
+          "name": {
+            "value": "savings"
+          }
+        },
+        {
+          "name": {
+            "value": "checking"
+          }
+        },
+        {
+          "name": {
+            "value": "credit"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Time_span",
+      "values": [
+        {
+          "name": {
+            "value": "week"
+          }
+        },
+        {
+          "name": {
+            "value": "month"
+          }
+        },
+        {
+          "name": {
+            "value": "year"
+          }
+        },
+        {
+          "name": {
+            "value": "today"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transaction_category",
+      "values": [
+        {
+          "name": {
+            "value": "drug"
+          }
+        },
+        {
+          "name": {
+            "value": "pharmacies"
+          }
+        },
+        {
+          "name": {
+            "value": "Drug Store"
+          }
+        },
+        {
+          "name": {
+            "value": "Medicine"
+          }
+        },
+        {
+          "name": {
+            "value": "Auto Rental"
+          }
+        },
+        {
+          "name": {
+            "value": "Auto"
+          }
+        },
+        {
+          "name": {
+            "value": "Car Rent"
+          }
+        },
+        {
+          "name": {
+            "value": "Fast Food Restaurants"
+          }
+        },
+        {
+          "name": {
+            "value": "Fast Food"
+          }
+        },
+        {
+          "name": {
+            "value": "Book Stores"
+          }
+        },
+        {
+          "name": {
+            "value": "Book"
+          }
+        },
+        {
+          "name": {
+            "value": "other"
+          }
+        }
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "Confirm.Intent-BudgetTriggerIntent",
+      "promptVersion": "1.0",
+      "definitionVersion": "1.0",
+      "variations": [
+        {
+          "type": "PlainText",
+          "value": "what is the amount you want to set for the budget"
+        },
+        {
+          "type": "PlainText",
+          "value": "what is the category you want to set for the budget"
+        }
+      ]
+    }
+  ],
+  "dialog": {
+    "version": "1.0",
+    "intents": [
+      {
+        "name": "AdviceIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": []
+      },
+      {
+        "name": "BalanceIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "AccountType",
+            "type": "Account_type",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "BudgetAddAmountIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "BudgetAmount",
+            "type": "AMAZON.NUMBER",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "BudgetAddCategoryIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "TransactionCategory",
+            "type": "Transaction_category",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "BudgetCheckIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "Account_type",
+            "type": "Account_type",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "Transaction_category",
+            "type": "Transaction_category",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "TransactionCategory",
+            "type": "Transaction_category",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "BudgetTriggerIntent",
+        "confirmationRequired": true,
+        "prompts": {
+          "confirm": "Confirm.Intent-BudgetTriggerIntent"
+        },
+        "slots": [
+          {
+            "name": "BudgetAmount",
+            "type": "AMAZON.NUMBER",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "TransactionCategory",
+            "type": "Transaction_category",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "CreditBooster",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": []
+      },
+      {
+        "name": "FAQIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "AccountId",
+            "type": "AMAZON.NUMBER",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      },
+      {
+        "name": "LostCardIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": []
+      },
+      {
+        "name": "MyNoIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": []
+      },
+      {
+        "name": "MyYesIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": []
+      },
+      {
+        "name": "TransactionIntent",
+        "confirmationRequired": false,
+        "prompts": {},
+        "slots": [
+          {
+            "name": "TimeSpan",
+            "type": "Time_span",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          },
+          {
+            "name": "TransactionCategory",
+            "type": "Transaction_category",
+            "elicitationRequired": false,
+            "confirmationRequired": false,
+            "prompts": {}
+          }
+        ]
+      }
+    ]
+  }
+}

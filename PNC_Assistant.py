@@ -40,7 +40,7 @@ def homepage():
 @ask.launch
 def start_skill():
     # it will say
-    welcome_message = 'Hello there, just a quick reminder. '# you have a car loan payment of 3000 dollars due this Saturday . . what can I do for you today?
+    welcome_message = 'Hello there, just a quick reminder . You have a car loan payment of 3000 dollars due this Saturday . . what can I do for you today?'
     # welcome_message = 'Hello there.'
     # question expect response
     pass_parameter('none')
@@ -64,7 +64,6 @@ def checkBalance(account_type):
     return question(stat).reprompt("I didn't get that. Can you say it again?")
 
 
-# js = json.loads('{"version": "1.0", "response": {"outputSpeech": {"type": "PlainText","text": "Your standard checking balance is  .  5000.0  .  anything else I can help you"},"shouldEndSession": false},"sessionAttributes": {}}')
 
 @ask.intent("TransactionIntent", mapping={'time_span': 'TimeSpan', 'transaction_type': 'TransactionCategory'})
 def checkTransaction(time_span, transaction_type):
@@ -120,7 +119,7 @@ def adviceWealth():
     ie = ir * bal
     mmie = mmir * bal
 
-    stat = ' '.join(['You have a healthy portfolio of ', str(bal), 'dollars in saving. You are getting', str(ie), 'interet earnings every year. You can do even greater with money market and your interest earning will be', str(mmie), 'dollars per year. . anything else I can help you'])
+    stat = ' '.join(['You have a healthy portfolio of ', str(bal), 'dollars in saving. You are getting', str(ie), 'interest earnings every year. You can do even greater with money market and your interest earning will be', str(mmie), 'dollars per year. . anything else I can help you'])
     pass_parameter('none')
     pass_response(stat)
     return question(stat).reprompt("I didn't get that. Can you say it again?")
@@ -202,8 +201,8 @@ def twitter_share():
     budget_amount = session.attributes['budget_amount']
     transaction_type_global = session.attributes['transaction_type_global']
     print 'AMO', budget_amount, 'TYPE', transaction_type_global
-    tweet('I have set a ${} budget for {} in my PNC account through out cute Alexa PNC Assistant'.format(budget_amount, transaction_type_global))
-    stat = 'You have set a ${} budget for {} in my PNC account through out cute Alexa PNC Assistant . anything else I can help you'.format(budget_amount, transaction_type_global)
+    tweet('I have set a ${} budget for {} in my PNC account through cute Alexa PNC Assistant'.format(budget_amount, transaction_type_global))
+    stat = 'You have set a ${} budget for {} in your PNC account through cute Alexa PNC Assistant . anything else I can help you'.format(budget_amount, transaction_type_global)
     pass_parameter('none')
     pass_response(stat)
     return question(stat)
@@ -252,19 +251,16 @@ def pass_parameter(text):
     response = requests.request("POST", url, data=payload, headers=headers)
 
 
-    # r = requests.post('https://apifestdemo.herokuapp.com/demo/userRequest', json=DATA)
-    # print r   
-
 
 @ask.intent("BudgetCheckIntent", mapping={'category': 'TransactionCategory'})
 def checkBudget(category):
     print 'category',category
     if category:
         try:
-            budget = web.getBudget(pnc_api_token, category)        
+            budget = web.getBudget(pnc_api_token, category)
         except:
             question("Error getting the budget")
-        stat = 'Your budget for category %s is %d' % (category, int(budget))
+        stat = 'Your budget for category %s is %d . anything else I can help you' % (category, int(budget))
         pass_parameter(category)
         pass_response(stat)
         return question(stat).reprompt("I didn't get that. Can you say it again?")
@@ -278,7 +274,7 @@ def checkBudget(category):
 
 @ask.intent("CreditBooster")
 def creditScore():
-    amountOwed = 0  
+    amountOwed = 0
     dic = web.getBalanceAndLimit(pnc_api_token)
     for key in dic:
         amountOwed += dic[key][0]
